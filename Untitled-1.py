@@ -1,38 +1,25 @@
-#Objective: Write a Python script that reads a log file 
-#containing timestamped events and calculates the time difference between the first and last entries in the log. 
-#Additionally, it should display the number of unique dates on which events occurred.
-
 import datetime
 
-with open('events.log.yaml', 'r') as file:
-    # reading the file
-    log = file.read()
+# Use the correct filename
+filename = 'events.log'
 
+# Initialize a list to hold the datetime objects
+datetime_objects = []
 
-# extracting the timestamp of each log entry and converting it to a datetime object
-# splitting the log into lines
-lines = log.split('\n')
-# parsing the timestamp from each line
-timestamps = [line.split(' ')[0] for line in lines]
-# converting the timestamps to datetime objects
-dates = []
+with open(filename, 'r') as file:
+    for line in file:
+        # Extract the full datetime string from each line
+        timestamp_str = line.split(' ', 1)[0] + ' ' + line.split(' ')[1]
+        # Convert the string to a datetime object
+        datetime_obj = datetime.datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+        datetime_objects.append(datetime_obj)
 
+# Calculate the time difference between the first and last entries
+time_diff = datetime_objects[-1] - datetime_objects[0]
 
-for ts in timestamps:
-    try:
-        m = datetime.datetime.strptime(ts, '%Y-%m-%d')
-        dates.append(m)
-    except ValueError:
-        pass
+# Extract just the date part for each datetime object to count unique dates
+unique_dates = len(set([dt.date() for dt in datetime_objects]))
 
-# calculating the time difference between the first and last log entries
-# finding the time difference between the first and last dates
-time_diff = dates[-1] - dates[0]
-# counting the number of unique dates present in the log file
-
-unique_dates = len(set(dates))
-
-#output
-
-print("Time diff", time_diff)
-print("Unique dates", unique_dates)
+# Output the results
+print(f"Time difference between first and last log entry: {time_diff}")
+print(f"Number of unique dates: {unique_dates}")
